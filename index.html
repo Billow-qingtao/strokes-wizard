@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="9H3ej6tNKS3t0DQugQUkWc">
+<head data-page-node-id="lJW17vt8O3bkMFQ1rsD07F">
+<meta charset="utf-8" data-page-node-id="N8dhmoWoKzZKi8R0Vwckdz">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" data-page-node-id="R98G9Apc9RUN2h4ShUG4JV">
+<meta name="theme-color" content="#ffffff" data-page-node-id="mTBPJkbToJgcc9GjwVv0k9">
+<title>小小笔画魔法师</title>
+<style>
+:root{
+  --bg:#ffffff; --card:#FAFBFF; --line:#EEF1F8; --ink:#4B4B5E; --sub:#9AA1B4;
+  --c1:#FFC75A; --c1s:#FFF6E2;
+  --c2:#6FCB9B; --c2s:#E7F7EF;
+  --c3:#7FB2F0; --c3s:#E9F1FE;
+  --c4:#FF9EC4; --c4s:#FFEDF5;
+  --guide:#E6EAF4; --guideOn:#CBD4E6;
+  --shadow:0 6px 18px rgba(120,130,170,.10);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  font-weight:700; overflow:hidden; user-select:none; -webkit-user-select:none;
+}
+#app{max-width:560px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;}
+.page{flex:1;min-height:0;display:flex;flex-direction:column;}
+.scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
+/* ---------- 通用头部 ---------- */
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 18px 6px;}
+.iconbtn{width:46px;height:46px;border-radius:50%;border:none;background:var(--card);
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);flex:none;cursor:pointer;}
+.iconbtn:active{transform:scale(.94);}
+.topTitle{font-size:19px;letter-spacing:.5px;}
+.starbox{margin-left:auto;display:flex;align-items:center;gap:6px;background:#FFF8E4;
+  border-radius:22px;padding:8px 14px;font-size:17px;color:#E9A32B;box-shadow:var(--shadow);}
+
+/* ---------- 首页 ---------- */
+.hero{padding:10px 22px 4px;}
+.hero h1{font-size:28px;margin:0 0 4px;letter-spacing:1px;}
+.hero p{margin:0;font-size:14px;color:var(--sub);font-weight:600;}
+.modlist{padding:14px 18px 20px;display:flex;flex-direction:column;gap:14px;}
+.modcard{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:30px;
+  padding:14px 18px;box-shadow:var(--shadow);border:2px solid #fff;cursor:pointer;transition:.15s;}
+.modcard:active{transform:scale(.98);}
+.modcard .pet{width:78px;height:78px;flex:none;}
+.modcard .mt{font-size:20px;margin:0 0 4px;}
+.modcard .ms{font-size:13px;color:var(--sub);font-weight:600;}
+.modcard.locked{filter:grayscale(.85);opacity:.6;}
+.modcard .lock{font-size:13px;color:var(--sub);}
+.badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:12px;background:#fff;color:var(--sub);}
+.homefoot{text-align:center;padding:4px 0 18px;}
+.linkbtn{background:none;border:none;color:var(--sub);font-size:13px;font-weight:600;
+  font-family:inherit;text-decoration:underline;cursor:pointer;padding:10px;}
+
+/* ---------- 关卡网格 ---------- */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:10px 18px 24px;}
+.lv{position:relative;aspect-ratio:1/1;border-radius:26px;border:none;background:var(--card);
+  box-shadow:var(--shadow);font-family:inherit;color:var(--ink);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.lv .g{font-size:26px;line-height:1.1;}
+.lv .n{font-size:11px;color:var(--sub);font-weight:600;}
+.lv.done{background:#FFF6E0;}
+.lv.cur{outline:3px solid #FFD97A;outline-offset:2px;}
+.lv.lock{color:#C6CBD8;background:#F6F7FB;box-shadow:none;}
+.lv .st{position:absolute;top:5px;right:7px;font-size:13px;}
+.lv .lk{font-size:16px;}
+.sect{padding:14px 20px 2px;font-size:14px;color:var(--sub);display:flex;align-items:center;gap:8px;}
+.sect::after{content:"";flex:1;height:2px;background:var(--line);border-radius:2px;}
+
+/* ---------- 书写页 ---------- */
+.writeHead{display:flex;align-items:center;gap:10px;padding:12px 16px 4px;}
+.lesson{flex:1;text-align:center;}
+.lesson .big{font-size:24px;}
+.lesson .sm{font-size:13px;color:var(--sub);font-weight:600;margin-top:2px;}
+.dots{display:flex;justify-content:center;gap:7px;padding:2px 0 6px;}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--guide);}
+.dot.on{background:var(--acc,#FFC75A);transform:scale(1.25);}
+.dot.ok{background:var(--acc,#FFC75A);}
+.tip{min-height:24px;text-align:center;font-size:15px;color:var(--sub);padding:0 24px 2px;font-weight:600;}
+.boardWrap{flex:1;min-height:0;padding:6px 16px 0;display:flex;}
+.board{position:relative;flex:1;background:var(--card);border-radius:34px;box-shadow:var(--shadow);
+  border:2px solid var(--line);overflow:hidden;}
+.board svg{width:100%;height:100%;display:block;touch-action:none;}
+.pet-corner{position:absolute;right:8px;bottom:6px;width:86px;height:86px;pointer-events:none;}
+.bubble{position:absolute;right:96px;bottom:44px;background:#fff;border-radius:16px;padding:7px 12px;
+  font-size:13px;box-shadow:var(--shadow);color:var(--ink);max-width:52%;opacity:0;transition:.25s;}
+.bubble.show{opacity:1;}
+.foot{display:flex;gap:12px;padding:12px 16px 20px;}
+.bigbtn{flex:1;height:66px;border-radius:26px;border:none;font-family:inherit;font-size:19px;font-weight:700;
+  color:#fff;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.bigbtn:active{transform:scale(.97);}
+.bigbtn.gray{background:#F0F2F8;color:var(--ink);}
+.bigbtn.main{background:var(--acc,#FFC75A);}
+
+/* ---------- 弹层 ---------- */
+.overlay{position:absolute;inset:0;background:rgba(255,255,255,.86);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;z-index:20;padding:24px;}
+.overlay.hide{display:none;}
+.win{background:#fff;border-radius:38px;box-shadow:0 12px 40px rgba(120,130,170,.18);
+  padding:26px 26px 22px;text-align:center;width:100%;max-width:340px;border:3px solid var(--line);}
+.win h2{margin:0 0 6px;font-size:24px;}
+.win p{margin:0 0 14px;font-size:14px;color:var(--sub);font-weight:600;}
+.win .stars{font-size:40px;letter-spacing:6px;margin:6px 0 10px;}
+.win .stars span{display:inline-block;animation:pop .5s cubic-bezier(.2,1.6,.4,1) both;}
+@keyframes pop{0%{transform:scale(0) rotate(-40deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.win .btns{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+.fly{position:absolute;font-size:30px;pointer-events:none;z-index:30;animation:fly 1s ease-out forwards;}
+@keyframes fly{0%{transform:translateY(0) scale(.4);opacity:0}
+ 25%{transform:translateY(-30px) scale(1.3);opacity:1}
+ 100%{transform:translateY(-140px) scale(.7);opacity:0}}
+
+/* ---------- 家长页 ---------- */
+.pcard{background:var(--card);border-radius:26px;box-shadow:var(--shadow);margin:12px 18px;padding:18px;}
+.pcard h3{margin:0 0 12px;font-size:17px;}
+.stat{display:flex;gap:12px;}
+.stat div{flex:1;background:#fff;border-radius:20px;padding:14px 8px;text-align:center;}
+.stat b{display:block;font-size:26px;color:#E9A32B;}
+.stat span{font-size:12px;color:var(--sub);}
+.rec{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px;}
+.rec:last-child{border:none;}
+.rec .t{color:var(--sub);font-size:12px;font-weight:600;margin-left:auto;}
+.empty{text-align:center;color:var(--sub);font-size:13px;padding:14px 0;}
+.qbox{text-align:center;}
+.qbox .q{font-size:26px;margin:8px 0 14px;}
+.opts{display:flex;gap:10px;justify-content:center;}
+.opt{width:64px;height:64px;border-radius:22px;border:2px solid var(--line);background:#fff;
+  font-size:20px;font-family:inherit;font-weight:700;color:var(--ink);cursor:pointer;}
+.toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(60,60,80,.9);
+  color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;z-index:40;opacity:0;transition:.25s;pointer-events:none;}
+.toast.show{opacity:1;bottom:112px;}
+.toggleRow{display:flex;align-items:center;justify-content:space-between;padding:12px 2px 0;font-size:14px;color:var(--sub);}
+.sw{width:54px;height:30px;border-radius:15px;background:#E3E7F0;position:relative;cursor:pointer;transition:.2s;border:none;}
+.sw.on{background:#A8D8BE;}
+.sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.sw.on i{left:27px;}
+</style>
+</head>
+<body data-page-node-id="81FEe0QFNbf4Rgd2raBBQt">
+<div id="app" data-page-node-id="5B2bQMdtRvYZJerhr5dLqf"></div>
+<div class="toast" id="toast" data-page-node-id="lDLd3Jblx22Dat7JVF7bXK"></div>
+<script>
+/* =========================================================
+   小小笔画魔法师 —— 5岁幼儿写字启蒙描红游戏
+   单文件实现：关卡数据 / 描红判定 / 语音跟读 / 音效配乐 / 星星奖励 / 家长页
+   ========================================================= */
+const NS = "http://www.w3.org/2000/svg";
+
+/* ---------------- 一、笔画乐园（8关） ---------------- */
+const BASIC = [
+  {id:'s1', name:'点', glyph:'丶', py:'diǎn', rhyme:'小小雨点，轻轻落下', d:['M42,28 Q50,42 58,54']},
+  {id:'s2', name:'横', glyph:'一', py:'héng', rhyme:'平平一条线，从左写到右', d:['M20,50 L80,50']},
+  {id:'s3', name:'竖', glyph:'丨', py:'shù',  rhyme:'直直一根线，从上写到下', d:['M50,18 L50,82']},
+  {id:'s4', name:'撇', glyph:'丿', py:'piě',  rhyme:'轻轻向左飘',           d:['M70,26 Q60,48 28,74']},
+  {id:'s5', name:'捺', glyph:'㇏', py:'nà',    rhyme:'慢慢向右落',           d:['M28,26 Q48,48 74,76']},
+  {id:'s6', name:'提', glyph:'㇀', py:'tí',    rhyme:'小小向上提',           d:['M24,72 L76,36']},
+  {id:'s7', name:'折', glyph:'𠃍', py:'zhé',   rhyme:'转弯变方向',           d:['M22,32 L70,32 L70,76']},
+  {id:'s8', name:'钩', glyph:'亅', py:'gōu',   rhyme:'竖尾小小钩',           d:['M50,20 L50,64 Q50,80 62,74']}
+];
+
+/* ---------------- 二、部首森林（15关） ---------------- */
+const RADICAL = [
+  {id:'r1', name:'单人旁', glyph:'亻', py:'dān rén páng',  tip:'和人有关', ex:'你 他', d:['M60,24 Q54,42 32,66','M48,34 L48,84']},
+  {id:'r2', name:'双人旁', glyph:'彳', py:'shuāng rén páng',tip:'和走路有关',ex:'行 往', d:['M54,20 Q48,34 34,48','M62,38 Q56,52 40,64','M50,44 L50,84']},
+  {id:'r3', name:'口字旁', glyph:'口', py:'kǒu zì páng',   tip:'和嘴巴有关',ex:'吃 叫', d:['M28,30 L28,78','M28,30 L72,30 L72,78','M28,78 L72,78']},
+  {id:'r4', name:'木字旁', glyph:'木', py:'mù zì páng',    tip:'和树木有关',ex:'树 林', d:['M18,38 L82,38','M50,16 L50,86','M50,52 Q40,66 20,80','M50,52 Q60,64 76,76']},
+  {id:'r5', name:'草字头', glyph:'艹', py:'cǎo zì tóu',    tip:'和植物有关',ex:'花 草', d:['M14,42 L86,42','M32,26 L32,62','M68,26 L68,62']},
+  {id:'r6', name:'三点水', glyph:'氵', py:'sān diǎn shuǐ', tip:'和水有关',  ex:'河 海', d:['M26,26 Q30,33 32,40','M24,48 Q28,55 30,62','M22,74 L62,58']},
+  {id:'r7', name:'火字旁', glyph:'火', py:'huǒ zì páng',   tip:'和火有关',  ex:'灯 烧', d:['M28,26 Q24,34 22,42','M72,26 Q68,34 66,42','M52,26 Q42,52 20,80','M50,52 Q62,68 78,82']},
+  {id:'r8', name:'日字旁', glyph:'日', py:'rì zì páng',    tip:'和太阳时间有关',ex:'明 时', d:['M30,22 L30,80','M30,22 L70,22 L70,80','M30,51 L70,51','M30,80 L70,80']},
+  {id:'r9', name:'月字旁', glyph:'月', py:'yuè zì páng',   tip:'和月亮身体有关',ex:'朋 脸', d:['M38,22 Q32,48 20,80','M38,22 L72,22 L72,72 Q72,84 58,80','M38,44 L72,44','M38,62 L72,62']},
+  {id:'r10',name:'土字旁', glyph:'土', py:'tǔ zì páng',    tip:'和土地有关',ex:'地 场', d:['M28,34 L76,34','M52,16 L52,82','M22,78 L80,66']},
+  {id:'r11',name:'女字旁', glyph:'女', py:'nǚ zì páng',    tip:'和女孩有关',ex:'妈 姐', d:['M58,22 Q50,40 40,52','M52,42 Q38,58 22,76','M20,66 L72,54']},
+  {id:'r12',name:'宝盖头', glyph:'宀', py:'bǎo gài tóu',   tip:'和房子有关',ex:'家 安', d:['M50,14 L50,28','M28,32 Q24,40 22,46','M14,36 L86,36 L74,54']},
+  {id:'r13',name:'竖心旁', glyph:'忄', py:'shù xīn páng',  tip:'和心情有关',ex:'快 忙', d:['M24,32 Q20,40 18,46','M50,20 L50,84','M76,30 Q80,37 81,43']},
+  {id:'r14',name:'走之底', glyph:'辶', py:'zǒu zhī dǐ',    tip:'和走路有关',ex:'过 远', d:['M36,16 Q40,23 42,30','M34,36 L60,36 Q52,50 42,58 Q38,64 34,68','M26,68 Q52,80 84,72']},
+  {id:'r15',name:'雨字头', glyph:'雨', py:'yǔ zì tóu',     tip:'和天气有关',ex:'雪 雷', d:['M22,20 L78,20','M24,20 L24,80','M24,34 L80,34 L80,70 Q80,82 68,78','M52,20 L52,76','M32,48 L36,55','M32,64 L36,71','M66,48 L70,55','M66,64 L70,71']}
+];
+
+/* ---------------- 三、字母星球（26字母 大写+小写） ---------------- */
+const UPPER = {
+ A:['M12,82 L30,20','M30,20 L48,82','M20,58 L40,58'],
+ B:['M16,20 L16,82','M16,20 Q46,20 44,51 Q46,82 16,82'],
+ C:['M46,32 Q46,20 30,20 Q14,20 14,51 Q14,82 30,82 Q46,82 46,70'],
+ D:['M16,20 L16,82','M16,20 Q52,20 44,51 Q52,82 16,82'],
+ E:['M16,20 L16,82','M16,20 L46,20','M16,51 L40,51','M16,82 L46,82'],
+ F:['M16,20 L16,82','M16,20 L46,20','M16,51 L38,51'],
+ G:['M46,30 Q46,20 30,20 Q14,20 14,51 Q14,82 30,82 Q48,82 48,62 L34,62'],
+ H:['M14,20 L14,82','M46,20 L46,82','M14,51 L46,51'],
+ I:['M30,20 L30,82','M18,20 L42,20','M18,82 L42,82'],
+ J:['M42,20 L42,66 Q42,82 28,82 Q14,82 14,66'],
+ K:['M14,20 L14,82','M46,20 L16,52','M26,44 L46,82'],
+ L:['M16,20 L16,82','M16,82 L46,82'],
+ M:['M12,82 L12,20 L30,56','M30,56 L48,20 L48,82'],
+ N:['M14,82 L14,20 L46,82 L46,20'],
+ O:['M30,20 Q14,20 14,51 Q14,82 30,82 Q46,82 46,51 Q46,20 30,20 Z'],
+ P:['M16,20 L16,82','M16,20 Q48,20 46,45 Q44,66 16,68'],
+ Q:['M30,20 Q14,20 14,51 Q14,82 30,82 Q46,82 46,51 Q46,20 30,20 Z','M36,62 L52,82'],
+ R:['M16,20 L16,82','M16,20 Q48,20 46,45 Q44,64 16,66','M28,64 L46,82'],
+ S:['M46,30 Q44,20 30,20 Q18,20 18,36 Q18,48 30,51 Q46,54 46,66 Q46,82 30,82 Q18,82 16,72'],
+ T:['M12,22 L48,22','M30,22 L30,82'],
+ U:['M14,20 L14,66 Q14,82 30,82 Q46,82 46,66 L46,20'],
+ V:['M14,20 L30,82 L46,20'],
+ W:['M10,20 L20,82 L30,40 L40,82 L50,20'],
+ X:['M14,20 L46,82','M46,20 L14,82'],
+ Y:['M14,20 L30,50 L46,20','M30,50 L30,82'],
+ Z:['M14,20 L46,20 L14,82 L46,82']
+};
+const LOWER = {
+ a:['M44,50 Q36,48 28,48 Q17,48 17,64 Q17,80 29,80 Q40,80 44,72 L44,50 L44,80'],
+ b:['M16,20 L16,82','M16,62 Q16,48 32,48 Q48,48 48,65 Q48,82 32,82 Q16,82 16,68'],
+ c:['M46,56 Q42,48 32,48 Q20,48 20,65 Q20,81 32,81 Q42,81 46,73'],
+ d:['M48,20 L48,82','M48,62 Q48,48 32,48 Q16,48 16,65 Q16,82 32,82 Q48,82 48,68'],
+ e:['M18,64 L46,64 Q46,48 32,48 Q18,48 18,65 Q18,81 32,81 Q44,81 46,72'],
+ f:['M40,20 Q32,24 32,34 L32,78','M22,44 L44,44'],
+ g:['M46,54 Q40,48 30,48 Q18,48 18,64 Q18,80 30,80 Q42,80 46,72 L46,80 Q46,96 30,96 Q18,96 14,88'],
+ h:['M16,20 L16,82','M16,60 Q16,48 32,48 Q44,48 44,60 L44,82'],
+ i:['M31,34 L33,43','M32,48 L32,80'],
+ j:['M36,34 L38,43','M36,48 L36,80 Q36,94 24,94 Q15,94 12,86'],
+ k:['M16,20 L16,82','M44,48 L18,64','M28,58 L46,82'],
+ l:['M30,20 L30,78'],
+ m:['M12,48 L12,82','M12,60 Q12,48 26,48 Q36,48 36,60 L36,82','M36,60 Q36,48 50,48 Q58,48 58,60 L58,82'],
+ n:['M16,48 L16,82','M16,60 Q16,48 32,48 Q44,48 44,60 L44,82'],
+ o:['M32,48 Q18,48 18,65 Q18,81 32,81 Q46,81 46,65 Q46,48 32,48 Z'],
+ p:['M16,48 L16,98','M16,62 Q16,48 32,48 Q48,48 48,65 Q48,82 32,82 Q16,82 16,68'],
+ q:['M48,48 L48,98','M48,62 Q48,48 32,48 Q16,48 16,65 Q16,82 32,82 Q48,82 48,68'],
+ r:['M18,48 L18,82','M18,60 Q18,50 30,48 Q38,48 40,52'],
+ s:['M44,54 Q42,48 32,48 Q22,48 22,55 Q22,62 32,64 Q42,67 42,74 Q42,81 31,81 Q21,81 19,74'],
+ t:['M32,24 L32,72 Q32,80 40,80 Q47,80 48,74','M20,44 L46,44'],
+ u:['M16,48 L16,74 Q16,82 28,82 Q40,82 40,74 L40,48','M40,48 L40,82'],
+ 'ü':['M14,48 L14,74 Q14,82 26,82 Q38,82 38,74 L38,48','M38,48 L38,82','M20,33 L22,40','M40,33 L42,40'],
+ v:['M16,48 L32,82 L48,48'],
+ w:['M12,48 L22,82 L32,56 L42,82 L52,48'],
+ x:['M18,48 L44,82','M44,48 L18,82'],
+ y:['M18,48 L30,72 L44,48','M30,72 L20,98'],
+ z:['M18,48 L46,48 L18,82 L46,82']
+};
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+/* ---------------- 四、拼音城堡（声母23 + 单韵母6 + 复韵母18） ---------------- */
+const SHENGMU  = ['b','p','m','f','d','t','n','l','g','k','h','j','q','x','zh','ch','sh','r','z','c','s','y','w'];
+const DANYUNMU = ['a','o','e','i','u','ü'];
+const FUYUNMU  = ['ai','ei','ui','ao','ou','iu','ie','üe','er','an','en','in','un','ün','ang','eng','ing','ong'];
+/* 读音用汉字标注（供语音合成与跟读） */
+const PY_SOUND = {
+ b:'波',p:'坡',m:'摸',f:'佛',d:'得',t:'特',n:'讷',l:'勒',g:'哥',k:'科',h:'喝',
+ j:'基',q:'欺',x:'希',zh:'知',ch:'吃',sh:'诗',r:'日',z:'资',c:'疵',s:'思',y:'衣',w:'乌',
+ a:'啊',o:'喔',e:'鹅',i:'衣',u:'乌','ü':'迂',
+ ai:'哀',ei:'诶',ui:'威',ao:'熬',ou:'欧',iu:'优',ie:'耶','üe':'约',er:'儿',
+ an:'安',en:'恩',in:'因',un:'温','ün':'晕',ang:'昂',eng:'鞥',ing:'英',ong:'翁'
+};
+
+/* ---------------- 模块定义 ---------------- */
+const MODULES = [
+  {id:'m1', name:'笔画乐园', sub:'8 个基本笔画 · 入门控笔', color:'var(--c1)', soft:'var(--c1s)', pet:'bear',  scale:'pentatonic'},
+  {id:'m2', name:'部首森林', sub:'15 个常用偏旁 · 边写边认', color:'var(--c2)', soft:'var(--c2s)', pet:'rabbit',scale:'forest'},
+  {id:'m3', name:'字母星球', sub:'26 个英文字母 · 大小写',    color:'var(--c3)', soft:'var(--c3s)', pet:'owl',   scale:'star'},
+  {id:'m4', name:'拼音城堡', sub:'声母 + 韵母 · 会写会读',    color:'var(--c4)', soft:'var(--c4s)', pet:'fox',   scale:'castle'}
+];
+
+/* ---------------- 关卡扁平化 ---------------- */
+const LEVELS = [];  // {id, module, index, title, sub, kind, stages:[{label,strokes:[{d,ox}],w,vb}]}
+BASIC.forEach((s,i)=>LEVELS.push({
+  id:s.id, m:'m1', idx:i, glyph:s.glyph, title:s.name, sub:s.py, rhyme:s.rhyme, kind:'stroke',
+  stageLabel:'笔画',
+  stages:[{label:s.name, w:16, vb:'0 0 100 100', strokes:s.d.map(d=>({d,ox:0}))}]
+}));
+RADICAL.forEach((s,i)=>LEVELS.push({
+  id:s.id, m:'m2', idx:i, glyph:s.glyph, title:s.name, sub:s.py, tip:s.tip, ex:s.ex, kind:'radical',
+  stageLabel:'部首',
+  stages:[{label:s.name, w:16, vb:'0 0 100 100', strokes:s.d.map(d=>({d,ox:0}))}]
+}));
+LETTERS.forEach((L,i)=>LEVELS.push({
+  id:'L'+L, m:'m3', idx:i, glyph:L+('abcdefghijklmnopqrstuvwxyz'[i]), title:L+' '+('abcdefghijklmnopqrstuvwxyz'[i]),
+  sub:'英文字母', kind:'letter',
+  stages:[
+    {label:'大写 '+L, w:13, vb:'0 0 100 100', strokes:UPPER[L].map(d=>({d,ox:20}))},
+    {label:'小写 '+('abcdefghijklmnopqrstuvwxyz'[i]), w:11, vb:'0 0 100 100', strokes:LOWER['abcdefghijklmnopqrstuvwxyz'[i]].map(d=>({d,ox:20}))}
+  ]
+}));
+function pyStage(str){
+  const arr = [];
+  for(const ch of str) arr.push(ch);
+  const n = arr.length;
+  const W = Math.max(100, 54*n + 26);
+  const ox = (W - (54*n - 14))/2 - 10;
+  const strokes = [];
+  arr.forEach((ch,i)=>{
+    (LOWER[ch]||[]).forEach(d=>strokes.push({d, ox: ox + i*54}));
+  });
+  return {label:str, w:10, vb:'0 0 '+W+' 100', strokes, say:PY_SOUND[str]||str};
+}
+[...SHENGMU,...DANYUNMU,...FUYUNMU].forEach((p,i)=>LEVELS.push({
+  id:'P'+i+'_'+p, m:'m4', idx:i, glyph:p, title:p, sub:PY_SOUND[p]||p, kind:'pinyin',
+  group: i<23?'声母':(i<29?'单韵母':'复韵母'),
+  stages:[pyStage(p)]
+}));
+const LV_BY_ID = {}; LEVELS.forEach(l=>LV_BY_ID[l.id]=l);
+function levelsOf(m){ return LEVELS.filter(l=>l.m===m); }
+
+/* ---------------- 存档 ---------------- */
+const KEY='xxbhmfs_v1';
+let SAVE = {stars:0, lv:{}, today:{}, bgm:true};
+try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); SAVE=Object.assign(SAVE,o); if(!SAVE.today)SAVE.today={}; } }catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(SAVE)); }catch(e){} }
+function todayKey(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function todayRec(){ const k=todayKey(); if(!SAVE.today[k]) SAVE.today[k]={stars:0, list:[]}; return SAVE.today[k]; }
+function moduleDone(m){ return levelsOf(m).every(l=>SAVE.lv[l.id]&&SAVE.lv[l.id].done); }
+function moduleProgress(m){ const ls=levelsOf(m); return ls.filter(l=>SAVE.lv[l.id]&&SAVE.lv[l.id].done).length+'/'+ls.length; }
+function moduleUnlocked(mi){ if(mi===0) return true; return moduleDone(MODULES[mi-1].id); }
+function levelUnlocked(l){
+  const mi = MODULES.findIndex(m=>m.id===l.m);
+  if(!moduleUnlocked(mi)) return false;
+  const ls = levelsOf(l.m);
+  if(l.idx===0) return true;
+  const prev = ls[l.idx-1];
+  return !!(SAVE.lv[prev.id] && SAVE.lv[prev.id].done);
+}
+function nextLevel(l){
+  const ls = levelsOf(l.m);
+  if(l.idx+1 < ls.length) return ls[l.idx+1];
+  const mi = MODULES.findIndex(m=>m.id===l.m);
+  if(mi+1 < MODULES.length) return levelsOf(MODULES[mi+1].id)[0];
+  return null;
+}
+
+/* ---------------- 音频（音效 + 配乐，纯合成，无外部资源） ---------------- */
+let AC=null;
+function ac(){ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(!C) return null; AC=new C(); } if(AC.state==='suspended') AC.resume(); return AC; }
+let bgmGain=null, sfxGain=null, masterGain=null;
+function ensureBus(){
+  const c=ac(); if(!c) return null;
+  if(!masterGain){
+    masterGain=c.createGain(); masterGain.gain.value=0.9; masterGain.connect(c.destination);
+    bgmGain=c.createGain(); bgmGain.gain.value=0.05; bgmGain.connect(masterGain);
+    sfxGain=c.createGain(); sfxGain.gain.value=0.5;  sfxGain.connect(masterGain);
+  }
+  return c;
+}
+function tone(f, t0, dur, type, vol, bus){
+  const c=ensureBus(); if(!c) return;
+  const o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=f;
+  const s=c.currentTime + (t0||0);
+  g.gain.setValueAtTime(0.0001, s);
+  g.gain.exponentialRampToValueAtTime(vol||0.18, s+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001, s+dur);
+  o.connect(g); g.connect(bus||sfxGain); o.start(s); o.stop(s+dur+0.02);
+}
+function noiseBurst(dur, vol){
+  const c=ensureBus(); if(!c) return;
+  const len=Math.floor(c.sampleRate*dur);
+  const buf=c.createBuffer(1,len,c.sampleRate), dat=buf.getChannelData(0);
+  for(let i=0;i<len;i++) dat[i]=(Math.random()*2-1)*(1-i/len);
+  const src=c.createBufferSource(); src.buffer=buf;
+  const f=c.createBiquadFilter(); f.type='bandpass'; f.frequency.value=2600; f.Q.value=0.8;
+  const g=c.createGain(); g.gain.value=vol||0.05;
+  src.connect(f); f.connect(g); g.connect(sfxGain); src.start();
+}
+/* 音效 */
+const SFX = {
+  click(){ tone(880,0,0.09,'sine',0.16); tone(1320,0.02,0.09,'sine',0.10); },
+  write(){ noiseBurst(0.07, 0.035); },
+  correct(){ [523,659,784].forEach((f,i)=>tone(f,i*0.07,0.2,'triangle',0.15)); },
+  star(){ [784,988,1175,1568].forEach((f,i)=>tone(f,i*0.06,0.22,'sine',0.13)); },
+  pass(){ [523,659,784,1047,1319].forEach((f,i)=>tone(f,i*0.09,0.3,'triangle',0.15)); },
+  rewrite(){ tone(420,0,0.14,'sine',0.12); tone(320,0.05,0.14,'sine',0.08); },
+  gentle(){ tone(392,0,0.18,'sine',0.12); tone(349,0.14,0.22,'sine',0.10); }
+};
+/* 配乐（每模块不同音阶，低音量循环） */
+const SCALES = {
+  pentatonic:[523,587,659,784,880,784,659,587],
+  forest:[440,523,659,587,523,440,392,523],
+  star:[659,784,880,1047,880,784,659,587],
+  castle:[587,659,784,659,587,523,659,784],
+  home:[523,659,784,659,587,523,440,523]
+};
+let bgmTimer=null, bgmIdx=0, audioReady=false, pendingBgm='home';
+function bgmStart(kind){
+  bgmStop();
+  pendingBgm = kind;
+  if(!audioReady || !SAVE.bgm) return;
+  const seq = SCALES[kind]||SCALES.home;
+  const step = kind==='star'?620:(kind==='forest'?720:520);
+  bgmIdx=0;
+  const play=()=>{
+    const f=seq[bgmIdx%seq.length]; bgmIdx++;
+    tone(f/2, 0, 0.9, 'sine', 0.35, bgmGain);
+    tone(f, 0.02, 0.8, 'triangle', 0.14, bgmGain);
+  };
+  play(); bgmTimer=setInterval(play, step);
+}
+function bgmStop(){ if(bgmTimer){ clearInterval(bgmTimer); bgmTimer=null; } }
+function duck(on){ if(bgmGain && ac()) bgmGain.gain.setTargetAtTime(on?0.012:0.05, ac().currentTime, 0.15); }
+
+/* ---------------- 语音（浏览器 TTS） ---------------- */
+let VOICES=[];
+function loadVoices(){ try{ VOICES = speechSynthesis.getVoices()||[]; }catch(e){} }
+if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged=loadVoices; }
+function speak(text, lang){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang = lang||'zh-CN'; u.rate = lang==='en-US'?0.75:0.8; u.pitch=1.25; u.volume=1;
+    const v = VOICES.find(v=>v.lang && v.lang.replace('_','-').toLowerCase().startsWith((lang||'zh-CN').toLowerCase().slice(0,2)));
+    if(v) u.voice=v;
+    duck(true);
+    u.onend=()=>duck(false); u.onerror=()=>duck(false);
+    speechSynthesis.speak(u);
+    setTimeout(()=>duck(false), 3200);
+  }catch(e){}
+}
+function sayPrompt(kind){
+  const map={
+    enter:'小朋友，我们一起来写字吧',
+    good:'哇，写得真棒，太厉害啦',
+    near:'很不错哦，继续加油',
+    soft:'没关系，我们再试一次吧',
+    pass:'成功解锁新本领，你超棒的'
+  };
+  speak(map[kind]||'', 'zh-CN');
+}
+
+/* ---------------- 小动物插画 ---------------- */
+function pet(kind, size){
+  const s = size||78;
+  const common = 'width="'+s+'" height="'+s+'" viewBox="0 0 100 100" xmlns="'+NS+'"';
+  if(kind==='bear') return `<svg ${common}>
+    <ellipse cx="50" cy="92" rx="30" ry="6" fill="#EFE6DA"/>
+    <circle cx="26" cy="30" r="14" fill="#F6D7B0"/><circle cx="74" cy="30" r="14" fill="#F6D7B0"/>
+    <circle cx="26" cy="30" r="7" fill="#FFD9E8"/><circle cx="74" cy="30" r="7" fill="#FFD9E8"/>
+    <circle cx="50" cy="52" r="32" fill="#FBE0BC"/>
+    <ellipse cx="50" cy="64" rx="18" ry="14" fill="#FFF3E2"/>
+    <circle cx="38" cy="46" r="4.5" fill="#5A4A3A"/><circle cx="62" cy="46" r="4.5" fill="#5A4A3A"/>
+    <circle cx="39.5" cy="44.5" r="1.6" fill="#fff"/><circle cx="63.5" cy="44.5" r="1.6" fill="#fff"/>
+    <circle cx="28" cy="56" r="5" fill="#FFC1D3" opacity=".75"/><circle cx="72" cy="56" r="5" fill="#FFC1D3" opacity=".75"/>
+    <ellipse cx="50" cy="60" rx="5" ry="4" fill="#6B5545"/>
+    <path d="M40,70 Q50,78 60,70" stroke="#6B5545" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>`;
+  if(kind==='rabbit') return `<svg ${common}>
+    <ellipse cx="50" cy="92" rx="28" ry="6" fill="#E9EFE6"/>
+    <ellipse cx="36" cy="24" rx="9" ry="22" fill="#FFFFFF" stroke="#E7EDF5" stroke-width="2"/>
+    <ellipse cx="64" cy="24" rx="9" ry="22" fill="#FFFFFF" stroke="#E7EDF5" stroke-width="2"/>
+    <ellipse cx="36" cy="26" rx="4.5" ry="14" fill="#FFD3E3"/>
+    <ellipse cx="64" cy="26" rx="4.5" ry="14" fill="#FFD3E3"/>
+    <circle cx="50" cy="60" r="30" fill="#FFFFFF" stroke="#E7EDF5" stroke-width="2"/>
+    <circle cx="39" cy="55" r="4.5" fill="#4B4B5E"/><circle cx="61" cy="55" r="4.5" fill="#4B4B5E"/>
+    <circle cx="40.5" cy="53.5" r="1.6" fill="#fff"/><circle cx="62.5" cy="53.5" r="1.6" fill="#fff"/>
+    <circle cx="28" cy="64" r="5" fill="#FFC1D3" opacity=".7"/><circle cx="72" cy="64" r="5" fill="#FFC1D3" opacity=".7"/>
+    <path d="M50,64 L45,69 L55,69 Z" fill="#FF9EC4"/>
+    <path d="M50,69 L50,74" stroke="#C9D2E0" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M43,74 Q50,80 57,74" stroke="#C9D2E0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>`;
+  if(kind==='owl') return `<svg ${common}>
+    <ellipse cx="50" cy="92" rx="28" ry="6" fill="#E7EDF8"/>
+    <path d="M22,34 L30,18 L40,32 Z" fill="#9FC0F2"/><path d="M78,34 L70,18 L60,32 Z" fill="#9FC0F2"/>
+    <ellipse cx="50" cy="56" rx="34" ry="32" fill="#B8D4F7"/>
+    <ellipse cx="50" cy="66" rx="22" ry="20" fill="#EAF3FF"/>
+    <circle cx="38" cy="48" r="13" fill="#FFFFFF"/><circle cx="62" cy="48" r="13" fill="#FFFFFF"/>
+    <circle cx="38" cy="48" r="6.5" fill="#4B4B5E"/><circle cx="62" cy="48" r="6.5" fill="#4B4B5E"/>
+    <circle cx="40" cy="46" r="2.2" fill="#fff"/><circle cx="64" cy="46" r="2.2" fill="#fff"/>
+    <path d="M50,54 L44,62 L56,62 Z" fill="#FFC75A"/>
+    <circle cx="24" cy="62" r="5" fill="#FFC1D3" opacity=".6"/><circle cx="76" cy="62" r="5" fill="#FFC1D3" opacity=".6"/>
+  </svg>`;
+  return `<svg ${common}>
+    <ellipse cx="50" cy="92" rx="28" ry="6" fill="#F3E7DE"/>
+    <path d="M22,32 L26,12 L44,28 Z" fill="#FFC08A"/><path d="M78,32 L74,12 L56,28 Z" fill="#FFC08A"/>
+    <path d="M24,30 L27,19 L40,28 Z" fill="#FFD9E8"/><path d="M76,30 L73,19 L60,28 Z" fill="#FFD9E8"/>
+    <circle cx="50" cy="56" r="30" fill="#FFCB99"/>
+    <ellipse cx="50" cy="68" rx="19" ry="15" fill="#FFF6EC"/>
+    <circle cx="39" cy="50" r="4.5" fill="#5A4A3A"/><circle cx="61" cy="50" r="4.5" fill="#5A4A3A"/>
+    <circle cx="40.5" cy="48.5" r="1.6" fill="#fff"/><circle cx="62.5" cy="48.5" r="1.6" fill="#fff"/>
+    <circle cx="27" cy="60" r="5" fill="#FF9EC4" opacity=".6"/><circle cx="73" cy="60" r="5" fill="#FF9EC4" opacity=".6"/>
+    <path d="M50,62 L44,67 L56,67 Z" fill="#6B5545"/>
+    <path d="M40,72 Q50,80 60,72" stroke="#6B5545" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+function starSVG(){ return `<svg width="20" height="20" viewBox="0 0 24 24" xmlns="${NS}"><path d="M12,2 L15,9 L22,9.6 L16.8,14.2 L18.4,21 L12,17.2 L5.6,21 L7.2,14.2 L2,9.6 L9,9 Z" fill="#FFC75A"/></svg>`; }
+
+/* ---------------- 页面框架 ---------------- */
+const app=document.getElementById('app');
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
+function go(html){ app.innerHTML=html; }
+
+/* ================= 首页 ================= */
+function renderHome(){
+  bgmStart('home');
+  const cards = MODULES.map((m,i)=>{
+    const un = moduleUnlocked(i);
+    const prog = moduleProgress(m.id);
+    return `<div class="modcard ${un?'':'locked'}" data-mod="${m.id}" data-i="${i}" style="background:${m.soft}">
+      <div class="pet">${pet(m.pet,78)}</div>
+      <div style="flex:1;min-width:0">
+        <p class="mt">${m.name}</p>
+        <div class="ms">${un? (m.sub+'　·　'+prog) : '完成上一个模块后解锁 🔒'}</div>
+      </div>
+      <div style="font-size:22px;color:${m.color}">${un?'›':'🔒'}</div>
+    </div>`;
+  }).join('');
+  go(`<div class="page">
+    <div class="hero">
+      <h1>小小笔画魔法师</h1>
+      <p>慢慢写，不用急　·　没有倒计时</p>
+    </div>
+    <div class="scroll">
+      <div class="modlist">${cards}</div>
+      <div class="homefoot">
+        <button class="linkbtn" id="parentBtn">家长入口</button>
+      </div>
+    </div>
+  </div>
+  <div class="topbar" style="position:absolute;top:0;right:0;left:0;pointer-events:none;padding-top:8px">
+    <div style="flex:1"></div>
+    <div class="starbox" style="pointer-events:auto">${starSVG()}<span>${SAVE.stars}</span></div>
+  </div>`);
+  app.querySelectorAll('.modcard').forEach(el=>{
+    el.addEventListener('click',()=>{
+      ac(); SFX.click();
+      const i=+el.dataset.i;
+      if(!moduleUnlocked(i)){ toast('先完成「'+MODULES[i-1].name+'」就可以来啦'); speak('先完成上一个模块，就可以来这里啦','zh-CN'); return; }
+      renderLevels(MODULES[i].id);
+    });
+  });
+  document.getElementById('parentBtn').addEventListener('click',()=>{ ac(); SFX.click(); renderParentGate(); });
+}
+
+/* ================= 关卡列表 ================= */
+function renderLevels(mid){
+  const m = MODULES.find(x=>x.id===mid);
+  bgmStart(m.scale);
+  const ls = levelsOf(mid);
+  let lastGroup='';
+  let body='';
+  if(mid!=='m4') body += '<div class="grid">';
+  ls.forEach(l=>{
+    const un = levelUnlocked(l), dn = SAVE.lv[l.id]&&SAVE.lv[l.id].done;
+    if(mid==='m4' && l.group!==lastGroup){
+      if(lastGroup) body += '</div>';
+      lastGroup = l.group;
+      body += `<div class="sect">${l.group}</div><div class="grid">`;
+    }
+    const inner = un
+      ? `<div class="g" style="font-size:${l.glyph.length>2?'18px':'26px'}">${l.glyph}</div><div class="n">${l.idx+1}</div>${dn?'<div class="st">⭐</div>':''}`
+      : `<div class="lk">🔒</div>`;
+    const cur = (!dn && un) ? ' cur':'';
+    body += `<button class="lv ${dn?'done':''} ${un?'':'lock'}${cur}" data-id="${l.id}">${inner}</button>`;
+  });
+  body += '</div>';
+  go(`<div class="page">
+    <div class="topbar">
+      <button class="iconbtn" id="back">‹</button>
+      <div class="topTitle">${m.name}</div>
+      <div class="starbox">${starSVG()}<span>${SAVE.stars}</span></div>
+    </div>
+    <div class="scroll" style="padding-top:6px">
+      <div style="padding:0 20px 6px;font-size:14px;color:var(--sub)">已通关 ${moduleProgress(mid)}　·　点开一关开始写吧</div>
+      ${body}
+      <div style="height:20px"></div>
+    </div>
+  </div>`);
+  document.getElementById('back').addEventListener('click',()=>{ SFX.click(); renderHome(); });
+  app.querySelectorAll('.lv').forEach(el=>{
+    el.addEventListener('click',()=>{
+      ac(); const l=LV_BY_ID[el.dataset.id];
+      if(el.classList.contains('lock')){ toast('先完成前面一关哦'); return; }
+      SFX.click(); openWrite(l);
+    });
+  });
+}
+
+/* ================= 书写页 ================= */
+let W = null; // 当前书写状态
+function openWrite(l){
+  const m = MODULES.find(x=>x.id===l.m);
+  bgmStart(m.scale);
+  W = { l, m, si:0, stage:l.stages[0], strokes:[], cur:null, pts:[], covered:null, samples:null, finished:false };
+  buildWriteDOM();
+  loadStage(0, true);
+}
+
+function buildWriteDOM(){
+  const l=W.l, m=W.m;
+  app.style.setProperty('--acc', m.color);
+  go(`<div class="page">
+    <div class="writeHead">
+      <button class="iconbtn" id="back">‹</button>
+      <div class="lesson">
+        <div class="big" id="lTitle">${l.title}</div>
+        <div class="sm" id="lSub">${l.sub}</div>
+      </div>
+      <div class="starbox">${starSVG()}<span id="starNum">${SAVE.stars}</span></div>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="tip" id="tip"></div>
+    <div class="boardWrap">
+      <div class="board" id="board">
+        <svg id="pad" xmlns="${NS}"></svg>
+        <div class="bubble" id="bubble">跟着小圆点出发～</div>
+        <div class="pet-corner" id="petCorner"></div>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="bigbtn gray" id="btnRewrite">↻ 重写</button>
+      <button class="bigbtn main" id="btnSound">🔊 听读音</button>
+    </div>
+  </div>
+  <div class="overlay hide" id="ov"></div>`);
+  document.getElementById('back').addEventListener('click',()=>{ SFX.click(); app.style.removeProperty('--acc'); renderLevels(l.m); });
+  document.getElementById('btnRewrite').addEventListener('click',()=>{ SFX.rewrite(); resetStage(); });
+  document.getElementById('btnSound').addEventListener('click',()=>{ SFX.click(); playSound(); });
+  document.getElementById('petCorner').innerHTML = pet(m.pet, 86);
+  const pad=document.getElementById('pad');
+  pad.addEventListener('pointerdown', onDown);
+  pad.addEventListener('pointermove', onMove);
+  pad.addEventListener('pointerup', onUp);
+  pad.addEventListener('pointercancel', onUp);
+}
+
+function playSound(){
+  const l=W.l;
+  let txt = l.title, lang='zh-CN';
+  if(l.kind==='stroke'){ txt = l.title + '，' + (l.rhyme||''); }
+  else if(l.kind==='radical'){ txt = l.title + '，' + (l.ex? '例字，' + l.ex.split('').join('，'):''); }
+  else if(l.kind==='letter'){ txt = l.title.split(' ')[W.si] || l.title; lang='en-US'; }
+  else { txt = (PY_SOUND[l.glyph]||l.glyph); }
+  speak(txt, lang);
+  bubble(l.kind==='letter'?'跟我读～':'听我读一遍～');
+}
+function bubble(t){ const b=document.getElementById('bubble'); if(!b) return; b.textContent=t; b.classList.add('show'); clearTimeout(bubble.t); bubble.t=setTimeout(()=>b.classList.remove('show'),2600); }
+
+/* --- 载入一个阶段（大写/小写 或 唯一阶段） --- */
+function loadStage(si, first){
+  W.si = si;
+  W.stage = W.l.stages[si];
+  W.strokes = W.stage.strokes.map(s=>({d:s.d, ox:s.ox||0, done:false}));
+  W.cur = 0;
+  document.getElementById('lTitle').textContent = W.l.title;
+  document.getElementById('lSub').textContent = (W.l.stages.length>1? W.stage.label + '　·　' : '') + W.l.sub;
+  document.getElementById('tip').textContent =
+    W.l.kind==='stroke' ? ('口诀：'+W.l.rhyme) :
+    W.l.kind==='radical' ? (W.l.tip + (W.l.ex? '　例字：'+W.l.ex : '')) :
+    W.l.kind==='pinyin' ? ('读音：' + (PY_SOUND[W.l.glyph]||'')) : '跟着小圆点，慢慢写';
+  renderPad();
+  if(first){ sayPrompt('enter'); bubble('小朋友，我们一起来写字吧～'); setTimeout(()=>playSound(), 1800); }
+  else { bubble('再写一个～'); setTimeout(()=>playSound(), 400); }
+}
+
+function renderPad(){
+  const pad=document.getElementById('pad');
+  const st=W.stage;
+  pad.setAttribute('viewBox', st.vb);
+  pad.setAttribute('preserveAspectRatio','xMidYMid meet');
+  const vb = st.vb.split(' ').map(Number);
+  const [vx,vy,vw,vh]=vb;
+  let html='';
+  // 背景格：汉字用田字格，字母/拼音用四线三格
+  const isHan = W.l.kind==='stroke'||W.l.kind==='radical';
+  if(isHan){
+    html += `<rect x="${vx+2}" y="${vy+2}" width="${vw-4}" height="${vh-4}" rx="8" fill="#fff" stroke="#E9EDF6" stroke-width="1.2"/>`;
+    html += `<path d="M${vx+vw/2},${vy+4} L${vx+vw/2},${vy+vh-4} M${vx+4},${vy+vh/2} L${vx+vw-4},${vy+vh/2}" stroke="#E9EDF6" stroke-width="1" stroke-dasharray="6 6"/>`;
+  } else {
+    const top = vy+8, base = vy+vh-14, mid = (top+base)/2;
+    html += `<path d="M${vx+4},${top} L${vx+vw-4},${top} M${vx+4},${mid} L${vx+vw-4},${mid} M${vx+4},${base} L${vx+vw-4},${base} M${vx+4},${base+10} L${vx+vw-4},${base+10}" stroke="#E9EDF6" stroke-width="1.1" stroke-dasharray="5 5"/>`;
+  }
+  // 引导轨迹层
+  W.strokes.forEach((s,i)=>{
+    const done = s.done, active = (i===W.cur);
+    html += `<g transform="translate(${s.ox},0)">
+      <path d="${s.d}" fill="none" stroke="${done?W.m.color:(active?'#D8DFEE':'#E9EDF6')}" stroke-width="${st.w}" stroke-linecap="round" stroke-linejoin="round"/>
+      ${done? `<path d="${s.d}" fill="none" stroke="${W.m.color}" stroke-width="${st.w}" stroke-linecap="round" stroke-linejoin="round"/>`:''}
+    </g>`;
+  });
+  // 当前笔：起笔点 + 方向箭头
+  const cur = W.strokes[W.cur];
+  // 用户笔迹层 + 采样探针（探针必须在文档内，getTotalLength 才稳定）
+  html += `<path id="ink" fill="none" stroke="${W.m.color}" stroke-width="${st.w*0.62}" stroke-linecap="round" stroke-linejoin="round" d=""/>`;
+  html += `<path id="probe" fill="none" stroke="none" d="" visibility="hidden"/>`;
+  pad.innerHTML = html;
+  W.ink = pad.querySelector('#ink');
+  W.probe = pad.querySelector('#probe');
+  // 当前笔的起笔圆点与方向箭头（需在探针可用后计算）
+  if(cur){
+    const g=document.createElementNS(NS,'g');
+    const p0=pointAt(cur.d,0,cur.ox), pm=pointAt(cur.d,0.55,cur.ox), pn=pointAt(cur.d,0.8,cur.ox);
+    const ang=Math.atan2(pn.y-pm.y,pn.x-pm.x)*180/Math.PI;
+    g.innerHTML =
+      `<circle cx="${p0.x}" cy="${p0.y}" r="${st.w*0.30}" fill="#fff" stroke="${W.m.color}" stroke-width="${st.w*0.16}">
+        <animate attributeName="r" values="${st.w*0.26};${st.w*0.40};${st.w*0.26}" dur="1.6s" repeatCount="indefinite"/></circle>
+       <g transform="translate(${pm.x},${pm.y}) rotate(${ang})" opacity=".85"><path d="M-4,-4 L6,0 L-4,4 Z" fill="${W.m.color}"/></g>`;
+    pad.insertBefore(g, W.ink);
+  }
+  renderDots();
+}
+function renderDots(){
+  const box=document.getElementById('dots'); if(!box) return;
+  box.innerHTML = W.strokes.map((s,i)=>`<div class="dot ${s.done?'ok':(i===W.cur?'on':'')}"></div>`).join('');
+}
+
+/* --- 采样与判定 --- */
+function probeEl(){ return (W && W.probe) ? W.probe : document.getElementById('probe'); }
+function pointAt(d, t, ox){
+  const el=probeEl(); if(!el) return {x:0,y:0};
+  el.setAttribute('d', d);
+  const L=el.getTotalLength()||1;
+  const p=el.getPointAtLength(L*Math.min(Math.max(t,0),1));
+  return {x:p.x+(ox||0), y:p.y};
+}
+function sampleStroke(s){
+  const _probeEl=probeEl(); if(!_probeEl) return [];
+  _probeEl.setAttribute('d', s.d);
+  const L=_probeEl.getTotalLength()||1;
+  const n=Math.max(8, Math.min(46, Math.round(L/4.5)));
+  const pts=[];
+  for(let i=0;i<n;i++){ const p=_probeEl.getPointAtLength(L*i/(n-1)); pts.push({x:p.x+(s.ox||0), y:p.y}); }
+  return pts;
+}
+function toSvg(e){
+  const pad=document.getElementById('pad');
+  const m=pad.getScreenCTM().inverse();
+  const pt=pad.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  const r=pt.matrixTransform(m); return {x:r.x,y:r.y};
+}
+function onDown(e){
+  if(W.finished) return;
+  ac();
+  e.preventDefault();
+  try{ document.getElementById('pad').setPointerCapture(e.pointerId); }catch(err){}
+  const s=W.strokes[W.cur]; if(!s) return;
+  W.samples = sampleStroke(s);
+  W.covered = new Array(W.samples.length).fill(false);
+  W.pts=[toSvg(e)]; W.out=0; W.hit=0;
+  W.ink.setAttribute('d', `M${W.pts[0].x},${W.pts[0].y}`);
+  SFX.write();
+}
+function onMove(e){
+  if(!W.pts || W.pts.length===0) return;
+  e.preventDefault();
+  const p=toSvg(e);
+  const last=W.pts[W.pts.length-1];
+  if(Math.hypot(p.x-last.x,p.y-last.y) < 1.2) return;
+  W.pts.push(p);
+  W.ink.setAttribute('d', W.pts.map((q,i)=>(i?'L':'M')+q.x+','+q.y).join(' '));
+  // 覆盖判定
+  const TOL = Math.max(9, W.stage.w*0.95);
+  let best=-1, bd=1e9;
+  const S=W.samples;
+  for(let i=0;i<S.length;i++){ const d=Math.hypot(p.x-S[i].x, p.y-S[i].y); if(d<bd){bd=d;best=i;} }
+  if(bd<=TOL){ W.covered[best]=true; W.hit++; }
+  if(bd>TOL*1.8) W.out++;
+  if(W.hit>0 && W.hit%9===0) SFX.write();
+}
+function onUp(){
+  if(!W.pts || W.pts.length===0) return;
+  const cov = W.covered.filter(Boolean).length / W.covered.length;
+  const outRatio = W.out / Math.max(1,W.pts.length);
+  const ok = cov>=0.5 && outRatio<0.45;
+  const near = !ok && cov>=0.34 && outRatio<0.55;
+  W.pts=null;
+  const s=W.strokes[W.cur];
+  if(ok||near){
+    s.done=true;
+    flashStroke(s);
+    W.cur++;
+    SFX.correct();
+    if(near){ sayPrompt('near'); bubble('很不错哦，继续加油！'); }
+    else { sayPrompt('good'); bubble('哇！写得真棒！'); flyStar(); }
+    renderPad();
+    if(W.cur>=W.strokes.length){
+      if(W.si+1 < W.l.stages.length){ setTimeout(()=>loadStage(W.si+1,false), 900); }
+      else finishLevel();
+    }
+  } else {
+    W.ink.setAttribute('d','');
+    SFX.gentle(); sayPrompt('soft'); bubble('没关系，我们再试一次吧～');
+  }
+}
+function flashStroke(s){
+  const pad=document.getElementById('pad'); if(!pad||!s) return;
+  const p=document.createElementNS(NS,'path');
+  p.setAttribute('d', s.d); p.setAttribute('fill','none');
+  p.setAttribute('stroke', W.m.color); p.setAttribute('stroke-width', W.stage.w*1.6);
+  p.setAttribute('stroke-linecap','round'); p.setAttribute('stroke-linejoin','round');
+  p.setAttribute('transform','translate('+(s.ox||0)+',0)');
+  p.setAttribute('opacity','0.45');
+  const an=document.createElementNS(NS,'animate');
+  an.setAttribute('attributeName','opacity'); an.setAttribute('values','0.45;0');
+  an.setAttribute('dur','0.55s'); an.setAttribute('fill','freeze');
+  p.appendChild(an); pad.insertBefore(p, W.ink);
+  setTimeout(()=>p.remove(),700);
+}
+function flyStar(){
+  const board=document.getElementById('board'); if(!board) return;
+  const r=board.getBoundingClientRect();
+  const el=document.createElement('div'); el.className='fly'; el.textContent='⭐';
+  el.style.left=(r.left+r.width/2-15)+'px'; el.style.top=(r.top+r.height/2-15)+'px';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),1000);
+}
+function resetStage(){
+  W.strokes.forEach(s=>s.done=false); W.cur=0; W.finished=false;
+  const ov=document.getElementById('ov'); if(ov) ov.classList.add('hide');
+  renderPad(); SFX.rewrite(); bubble('我们再来一次～');
+}
+
+/* --- 通关 --- */
+function finishLevel(){
+  W.finished=true;
+  SFX.pass(); SFX.star();
+  const l=W.l;
+  const first = !(SAVE.lv[l.id] && SAVE.lv[l.id].done);
+  if(first){
+    SAVE.stars += 1;
+    SAVE.lv[l.id] = {done:true, stars:1, ts:Date.now()};
+    const rec=todayRec(); rec.stars+=1;
+    rec.list.push({t:new Date().toTimeString().slice(0,5), m:l.m, name:l.title});
+    save();
+  }
+  const sn=document.getElementById('starNum'); if(sn) sn.textContent=SAVE.stars;
+  sayPrompt('pass');
+  const nx=nextLevel(l);
+  const ov=document.getElementById('ov');
+  ov.classList.remove('hide');
+  ov.innerHTML=`<div class="win">
+    <div class="pet" style="width:96px;height:96px;margin:0 auto">${pet(W.m.pet,96)}</div>
+    <h2>${first?'太棒啦！':'又写对啦！'}</h2>
+    <p>${first?'恭喜通关「'+l.title+'」':'这一关你已经会写啦'}</p>
+    <div class="stars">${[0,1,2].map(i=>`<span style="animation-delay:${i*0.12}s">⭐</span>`).join('')}</div>
+    <div class="btns">
+      ${nx? `<button class="bigbtn main" id="nextBtn">下一关：${nx.title} ›</button>`:''}
+      <button class="bigbtn gray" id="againBtn">再练一次</button>
+      <button class="bigbtn gray" id="homeBtn">回到地图</button>
+    </div>
+  </div>`;
+  const n=document.getElementById('nextBtn');
+  if(n) n.addEventListener('click',()=>{ SFX.click(); if(levelUnlocked(nx)) openWrite(nx); else renderLevels(l.m); });
+  document.getElementById('againBtn').addEventListener('click',()=>{ SFX.rewrite(); ov.classList.add('hide'); W.finished=false; resetStage(); });
+  document.getElementById('homeBtn').addEventListener('click',()=>{ SFX.click(); app.style.removeProperty('--acc'); renderLevels(l.m); });
+}
+
+/* ================= 家长页 ================= */
+function renderParentGate(){
+  const a=Math.floor(Math.random()*8)+2, b=Math.floor(Math.random()*8)+2, ans=a+b;
+  const opts=[ans, ans+1, ans-1].sort(()=>Math.random()-0.5);
+  go(`<div class="page">
+    <div class="topbar"><button class="iconbtn" id="back">‹</button><div class="topTitle">家长入口</div></div>
+    <div class="scroll" style="display:flex;align-items:center;justify-content:center">
+      <div class="pcard qbox" style="width:100%;margin:24px 18px">
+        <h3>请家长确认</h3>
+        <p style="color:var(--sub);font-size:13px;margin:0">算一算下面的题目</p>
+        <div class="q">${a} + ${b} = ?</div>
+        <div class="opts">${opts.map(o=>`<button class="opt" data-v="${o}">${o}</button>`).join('')}</div>
+      </div>
+    </div>
+  </div>`);
+  document.getElementById('back').addEventListener('click',()=>{ SFX.click(); renderHome(); });
+  app.querySelectorAll('.opt').forEach(el=>el.addEventListener('click',()=>{
+    SFX.click();
+    if(+el.dataset.v===ans) renderParent(); else toast('答案不对，再试一次～');
+  }));
+}
+function renderParent(){
+  const rec=todayRec();
+  const doneCount=Object.values(SAVE.lv).filter(v=>v.done).length;
+  const days=Object.keys(SAVE.today).sort().reverse().slice(0,7);
+  go(`<div class="page">
+    <div class="topbar"><button class="iconbtn" id="back">‹</button><div class="topTitle">家长页</div></div>
+    <div class="scroll">
+      <div class="pcard" style="margin-top:6px">
+        <h3>今日练习</h3>
+        <div class="stat">
+          <div><b>${rec.stars}</b><span>今日星星</span></div>
+          <div><b>${rec.list.length}</b><span>今日关卡</span></div>
+          <div><b>${SAVE.stars}</b><span>星星总数</span></div>
+        </div>
+      </div>
+      <div class="pcard">
+        <h3>今日练习记录</h3>
+        ${rec.list.length? rec.list.slice().reverse().map(r=>`<div class="rec">
+            <span style="color:${MODULES.find(m=>m.id===r.m).color}">●</span>
+            <span>${MODULES.find(m=>m.id===r.m).name}　${r.name}</span>
+            <span class="t">${r.t}</span></div>`).join('') : '<div class="empty">今天还没有练习，陪孩子写一笔吧～</div>'}
+      </div>
+      <div class="pcard">
+        <h3>最近 7 天</h3>
+        ${days.length? days.map(k=>`<div class="rec"><span>${k}</span><span style="color:var(--sub)">${SAVE.today[k].list.length} 关</span><span class="t">⭐ ${SAVE.today[k].stars}</span></div>`).join('') : '<div class="empty">暂无记录</div>'}
+        <div style="font-size:12px;color:var(--sub);margin-top:10px;line-height:1.6">
+          已完成 ${doneCount} / ${LEVELS.length} 关　·　数据仅保存在本机，不上传任何信息
+        </div>
+      </div>
+      <div class="pcard">
+        <div class="toggleRow"><span>背景音乐</span><button class="sw ${SAVE.bgm?'on':''}" id="bgmSw"><i></i></button></div>
+      </div>
+      <div style="text-align:center;padding:0 0 26px">
+        <button class="linkbtn" id="clearBtn">清空全部练习记录</button>
+      </div>
+    </div>
+  </div>`);
+  document.getElementById('back').addEventListener('click',()=>{ SFX.click(); renderHome(); });
+  document.getElementById('bgmSw').addEventListener('click',e=>{
+    SAVE.bgm=!SAVE.bgm; save(); e.currentTarget.classList.toggle('on',SAVE.bgm);
+    if(SAVE.bgm) bgmStart(pendingBgm==='home'?'home':pendingBgm); else bgmStop();
+  });
+  document.getElementById('clearBtn').addEventListener('click',()=>{
+    if(confirm('确定清空全部练习记录和星星吗？此操作不可恢复。')){
+      SAVE={stars:0,lv:{},today:{},bgm:SAVE.bgm}; save(); renderParent(); toast('已清空');
+    }
+  });
+}
+
+/* ---------------- 启动 ---------------- */
+document.addEventListener('touchmove',e=>{ if(e.touches.length>1) e.preventDefault(); },{passive:false});
+renderHome();
+/* 首次交互后再启动音频（浏览器自动播放策略） */
+window.addEventListener('pointerdown',()=>{ ac(); audioReady=true; bgmStart(pendingBgm); },{once:true});
+</script>
+</body>
+</html>
